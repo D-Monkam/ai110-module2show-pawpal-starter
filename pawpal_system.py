@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Dict
 
 @dataclass
 class Pet:
@@ -29,7 +29,8 @@ class Task:
     name: str
     time: int  # Duration in minutes
     priority: int
-    owner_preferences: str = ""
+    pet: "Pet"
+    owner_preferences: Dict[str, any] = field(default_factory=dict)
     is_completed: bool = False
 
     def mark_as_complete(self):
@@ -60,6 +61,10 @@ class Scheduler:
 
     def mark_task_complete(self, task: Task):
         """Marks a task in the schedule as complete."""
+        pass
+
+    def generate_plan(self) -> List[Task]:
+        """Sorts tasks and creates an optimized schedule."""
         pass
 
 class Owner:
