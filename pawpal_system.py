@@ -1,20 +1,22 @@
 from dataclasses import dataclass, field
 from typing import List, Dict
 
+
 @dataclass
 class Task:
     """Represents a single care task for a pet."""
     name: str  # Description of the task
     time: int  # Duration in minutes
+    priority: int # e.g., 1-5 (1 is lowest)
     frequency: str # e.g., 'daily', 'weekly'
     is_completed: bool = False
 
     def mark_as_complete(self):
-        """Marks the task as completed."""
+        """Marks this task as complete."""
         self.is_completed = True
 
     def edit_name(self, name: str):
-        """Edits the name of the task."""
+        """Updates the name of this task."""
         self.name = name
 
 @dataclass
@@ -29,21 +31,26 @@ class Pet:
     satisfactoryLevel: float = 0.0
 
     def add_task(self, task: Task):
-        """Adds a task to the pet's list of tasks."""
+        """Adds a new task to this pet's task list."""
         self.tasks.append(task)
 
     def add_to_diet(self, item: str):
-        """Adds a food item to the pet's diet."""
+        """Adds a new food item to this pet's diet."""
         self.diet.append(item)
 
     def add_to_medication(self, item: str):
-        """Adds a medication to the pet's medication list."""
+        """Adds a new medication to this pet's medication list."""
         self.medication.append(item)
 
     def calculate_satisfaction(self) -> float:
-        """Calculates the pet's satisfaction level based on various factors."""
-        # This logic will depend on completed tasks, etc.
-        pass
+        """Calculates this pet's satisfaction level based on completed tasks."""
+        completed_tasks = [task for task in self.tasks if task.is_completed]
+        if not self.tasks:
+            return 100.0  # No tasks, so pet is satisfied
+        
+        satisfaction = (len(completed_tasks) / len(self.tasks)) * 100
+        self.satisfactoryLevel = satisfaction
+        return self.satisfactoryLevel
 
 class Owner:
     """Manages multiple pets and provides access to all their tasks."""
@@ -52,11 +59,11 @@ class Owner:
         self.pets: List[Pet] = []
 
     def add_pet(self, pet: Pet):
-        """Adds a pet to the owner's list of pets."""
+        """Adds a new pet to this owner's pet list."""
         self.pets.append(pet)
 
     def get_all_tasks(self) -> List[Task]:
-        """Returns a single list of all tasks for all pets."""
+        """Returns a combined list of all tasks for all of this owner's pets."""
         all_tasks = []
         for pet in self.pets:
             all_tasks.extend(pet.tasks)
@@ -68,10 +75,19 @@ class Scheduler:
         self.owner = owner
 
     def generate_plan(self, available_time: int) -> List[Task]:
-        """
-        Retrieves all tasks from the owner's pets, and creates an 
-        optimized schedule based on priority, time, and other constraints.
-        """
+        """Generates a schedule of tasks that fits within the owner's available time."""
         all_tasks = self.owner.get_all_tasks()
-        # Core scheduling logic will go here
-        pass
+        
+        # 1. Filter out completed tasks and sort by priority (higher first)
+        uncompleted_tasks = [t for t in all_tasks if not t.is_completed]
+        sorted_tasks = sorted(uncompleted_tasks, key=lambda t: t.priority, reverse=True)
+        
+        # 2. Build the plan within the available time
+        plan = []
+        time_spent = 0
+        for task in sorted_tasks:
+            if time_spent + task.time <= available_time:
+                plan.append(task)
+                time_spent += task.time
+                
+        return plan
