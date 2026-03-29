@@ -54,3 +54,22 @@ The PawPal+ system includes several smart scheduling features to help you manage
 
 - **Time-Based Planning**: The scheduler generates a daily plan based on task priority and the total time you have available, ensuring that the most important tasks are always accounted for.
 
+### Testing PawPal+
+
+To run the built-in tests for PawPal+, use the following command in your terminal:
+
+```bash
+python -m pytest
+```
+
+The test suite in `tests/test_pawpal.py` covers the following key functionalities:
+
+- **Task Completion**: Ensures that tasks can be correctly marked as complete.
+- **Task Addition**: Verifies that new tasks can be successfully added to a pet.
+- **Sorting Correctness**: Checks that tasks are sorted chronologically by their start time.
+- **Recurrence Logic**: Confirms that completing a daily task correctly generates a new task for the following day.
+- **Conflict Detection**: Verifies that the scheduler identifies and flags tasks that are scheduled for the same time.
+
+- **Confidence Level**: ⭐⭐⭐⭐ (4 out of 5)
+
+
